@@ -1,0 +1,21 @@
+CREATE EXTERNAL TABLE if not exists lookup ( created_utc BIGINT,ups BIGINT,subreddit_id String, link_id String,name String, score_hidden BIGINT, author_flair_css_class String, author_flair_text String, subreddit String, id String ,removal_reason String,gilded BIGINT,downs BIGINT, archived BIGINT,author String,score BIGINT,retrieved_on BIGINT,body String, distinguished String,edited BIGINT,controversiality BIGINT,parent_id String )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE LOCATION '/user/ychoksi/check/';
+
+select count(*) from lookup;
+describe lookup;
+Create table ltable like lookup;
+Insert into ltable from lookup where author is not null;
+select author, count(*) as total from fcleaned where author != "[deleted]" and author != "" and author!="0" group by author order by total desc limit 10;
+Select created_utc, count(*) as total from ltable group by created_utc order by total desc limit 10;
+select subreddit, count(*) as total from fcleaned group by subreddit order by total desc limit 10;
+select author, count(subreddit) as nfl from fcleaned where subreddit = "nfl" and author != "[deleted]" group by author order by nfl desc limit 10;
+select count(*) as Dota2_count from ltable where subreddit = "DotA2";
+select author, count(subreddit) as dota2_count from ltable where subreddit = "DotA2" and author != "[deleted]" group by author order by dota2_count desc limit 10;
+select author, SUM(Controversiality) as total_contro, COUNT(*) as sum from fcleaned where subreddit="politics" group by author order by total_contro desc limit 100;
+select author, sum(controversiality) as contro, sum(edited) as edit from fcleaned where author!="0" and author!="[deleted]" and author != "" group by author order by contro desc limit 50;
+select author, SUM(ups) as ups, SUM(controversiality) as contro from ltable where author != "" and author !="[deleted]" and author!="0" and author != "90000|90000" group by author order by ups desc limit 100;
+select subreddit, count(archived) as total from fcleaned group by subreddit order by total desc limit 20;
+select subreddit, count(archived) as total from fcleaned group by subreddit order by total desc limit 20;
+select author, sum(ups) as total from fcleaned where author!="[deleted]" and author!="0" and author!="90000|90000" and author!="iu" group by author order by total desc limit 20;
+select subreddit, sum(ups) as total from fcleaned group by subreddit order by total desc limit 20;
